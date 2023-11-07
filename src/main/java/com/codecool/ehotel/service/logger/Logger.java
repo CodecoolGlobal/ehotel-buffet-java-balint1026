@@ -1,7 +1,6 @@
 package com.codecool.ehotel.service.logger;
 
 public interface Logger {
-    public void infoLogger(String info);
-
-    public void errorLogger(String error);
+    void infoLogger(String message);
+    void errorLogger(String message);
 }
