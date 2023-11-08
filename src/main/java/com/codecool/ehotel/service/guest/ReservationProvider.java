@@ -24,6 +24,7 @@ public class ReservationProvider {
         int start = random.nextInt(latestPossibleDay);
         days.add(seasonStart.plusDays(start));
         days.add(LocalDate.now().plusDays(start+nights));
+
         return days;
     }
 }
