@@ -13,10 +13,10 @@ public class GuestProvider implements GuestService{
     Random random = new Random();
     @Override
     public Guest generateRandomGuest(LocalDate seasonStart, LocalDate seasonEnd) {
-        List<LocalDate> days = ReservationProvider.selectCheckInDate(3,8);
+        List<LocalDate> days = ReservationProvider.selectCheckInDate();
         Guest guest = new Guest(RandomNameGenerator.generate(),GuestType.values()[random.nextInt(GuestType.values().length)], days.get(0),days.get(1));
-        System.out.println(guest.name());
-        System.out.println(guest.toString());
+        // System.out.println(guest.name());
+       // System.out.println(guest.toString());
 
         return guest;
     }
