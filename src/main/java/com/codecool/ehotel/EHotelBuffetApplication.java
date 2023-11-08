@@ -21,7 +21,9 @@ public class EHotelBuffetApplication {
         LocalDate seasonEnd = LocalDate.now().plusDays(seasonLength);
 
         GuestProvider guestProvider = new GuestProvider();
+        for(int i = 0; i < 40; i++){
         guestProvider.generateRandomGuest(seasonStart,seasonEnd);
+
 
         List<Guest> guestList = new ArrayList<>();
 
@@ -41,6 +43,14 @@ public class EHotelBuffetApplication {
             err.printStackTrace();
         }
         System.out.println(season.get(2));
+
+        List<Guest> guestsForADay = new ArrayList<>();
+        List<ArrayList<Guest>> season = new ArrayList<>();
+
+
+    }
+
+    void fillSeasonDays(){
 
     }
     private static void fillSeasonDays(List<Guest> guestList, List<List<Guest>> season, LocalDate seasonStart, LocalDate seasonEnd) {
