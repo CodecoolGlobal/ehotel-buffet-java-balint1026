@@ -21,14 +21,15 @@ public class EHotelBuffetApplication {
         LocalDate seasonEnd = LocalDate.now().plusDays(seasonLength);
 
         GuestProvider guestProvider = new GuestProvider();
-        for(int i = 0; i < 40; i++){
-        guestProvider.generateRandomGuest(seasonStart,seasonEnd);
+        for (int i = 0; i < 40; i++) {
+            guestProvider.generateRandomGuest(seasonStart, seasonEnd);
 
-
+        }
         List<Guest> guestList = new ArrayList<>();
 
+
         for (int i = 0; i < 150; i++) {
-             guestList.add(guestProvider.generateRandomGuest(seasonStart,seasonEnd));
+            guestList.add(guestProvider.generateRandomGuest(seasonStart, seasonEnd));
         }
 
         List<List<Guest>> season = new ArrayList<>();
@@ -39,21 +40,15 @@ public class EHotelBuffetApplication {
         GoogleSheetsExporter sheetExporter = new GoogleSheetsExporter();
         try {
             sheetExporter.exportDataToGoogleSheets(season);
-        }catch(Exception err){
+        } catch (Exception err) {
             err.printStackTrace();
         }
         System.out.println(season.get(2));
 
-        List<Guest> guestsForADay = new ArrayList<>();
-        List<ArrayList<Guest>> season = new ArrayList<>();
-
-
     }
 
-    void fillSeasonDays(){
-
-    }
-    private static void fillSeasonDays(List<Guest> guestList, List<List<Guest>> season, LocalDate seasonStart, LocalDate seasonEnd) {
+    private static void fillSeasonDays(List<Guest> guestList, List<List<Guest>> season, LocalDate
+            seasonStart, LocalDate seasonEnd) {
         for (Guest guest : guestList) {
             LocalDate checkInDate = guest.checkIn();
             LocalDate checkOutDate = guest.checkOut();
