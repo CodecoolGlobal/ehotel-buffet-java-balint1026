@@ -1,5 +1,6 @@
 package com.codecool.ehotel;
 
+import com.codecool.ehotel.model.Buffet;
 import com.codecool.ehotel.model.Guest;
 import com.codecool.ehotel.service.UI.Input;
 import com.codecool.ehotel.service.guest.GuestProvider;
@@ -7,14 +8,13 @@ import com.codecool.ehotel.service.sheetsExporter.GoogleSheetsExporter;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class EHotelBuffetApplication {
 
     public static void main(String[] args) {
+        GuestProvider guestProvider = new GuestProvider();
+        Buffet buffet = new Buffet();
         Input input = new Input();
         LocalDate seasonStart = LocalDate.now();
         int seasonLength = input.getSeasonLength();
@@ -22,6 +22,12 @@ public class EHotelBuffetApplication {
         LocalDate seasonEnd = LocalDate.now().plusDays(seasonLength + 1);
         List<Guest> guestList = generateGuests(guestAmount, seasonStart, seasonEnd);
         List<List<Guest>> season = fillSeasonDays(guestList, seasonStart, seasonLength);
+        Set<Guest> dailyGuests = guestProvider.getGuestsForDay(season, 0);
+        List<Set<Guest>> guestsPerCycle = buffet.getGuestsForCycle(dailyGuests);
+        System.out.println(guestsPerCycle.get(0));
+        System.out.println(guestsPerCycle.get(1));
+        System.out.println(guestsPerCycle.get(2));
+
 
         GoogleSheetsExporter sheetExporter = new GoogleSheetsExporter();
         try {
