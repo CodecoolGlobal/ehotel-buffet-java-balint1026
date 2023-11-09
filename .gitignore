@@ -133,5 +133,9 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 .idea
+tokens/
+
+resources/
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,maven
+/src/main/resources/
