@@ -2,6 +2,7 @@ package com.codecool.ehotel.service.sheetsExporter;
 import com.codecool.ehotel.model.Guest;
 
 
+import com.codecool.ehotel.service.logger.ConsoleLogger;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.*;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -43,29 +43,35 @@ public class GoogleSheetsExporter {
             String tabName = LocalDateTime.now().toString().substring(11,19);
             String valueInputOption = "RAW";
                 AddTabToGoogleSheet(service,spreadsheetId, tabName);
-            List<List<Object>> allValues = new ArrayList<>();
-
-            for (int dayIndex = 0; dayIndex < season.size(); dayIndex++) {
-                List<Guest> day = season.get(dayIndex);
-                List<Object> dayValues = new ArrayList<>();
-                dayValues.add("Day " + (dayIndex + 1)); // Add day information
-
-                for (Guest guest : day) {
-                    dayValues.add(guest.name());
-                    dayValues.add(guest.checkIn().toString().substring(5) + " --- " + guest.checkOut().toString().substring(5));
-                    dayValues.add("");
-                }
-
-                allValues.add(dayValues);
-            }
+            List<List<Object>> allValues = getLists(season);
 
             ValueRange body = new ValueRange().setValues(allValues);
             String range = tabName + "!A1:ZZZ99999";
             UpdateValuesResponse response = updateSheetValues(service, spreadsheetId, range, body, valueInputOption);
             printResult(response);
         } catch (Exception e) {
-            e.printStackTrace();
+            ConsoleLogger logger = new ConsoleLogger();
+            logger.handleError(e);
         }
+    }
+
+    private static List<List<Object>> getLists(List<List<Guest>> season) {
+        List<List<Object>> allValues = new ArrayList<>();
+
+        for (int dayIndex = 0; dayIndex < season.size() - 2; dayIndex++) {
+            List<Guest> day = season.get(dayIndex);
+            List<Object> dayValues = new ArrayList<>();
+            dayValues.add("Day " + (dayIndex + 1)); // Add day information
+
+            for (Guest guest : day) {
+                dayValues.add(guest.name());
+                dayValues.add(guest.checkIn().toString().substring(5) + " --- " + guest.checkOut().toString().substring(5));
+                dayValues.add("");
+            }
+
+            allValues.add(dayValues);
+        }
+        return allValues;
     }
 
 
@@ -77,13 +83,13 @@ public class GoogleSheetsExporter {
                 .build();
     }
 
-    public static BatchUpdateSpreadsheetResponse AddTabToGoogleSheet(Sheets service, String sheetName, String tabName)
+    public static void AddTabToGoogleSheet(Sheets service, String sheetName, String tabName)
             throws IOException {
         List<Request> requests = new ArrayList<>();
         requests.add(new Request().setAddSheet(new AddSheetRequest().setProperties(new SheetProperties()
                 .setTitle(tabName))));
         BatchUpdateSpreadsheetRequest body = new BatchUpdateSpreadsheetRequest().setRequests(requests);
-        return service.spreadsheets().batchUpdate(sheetName, body).execute();
+        service.spreadsheets().batchUpdate(sheetName, body).execute();
     }
 
 
