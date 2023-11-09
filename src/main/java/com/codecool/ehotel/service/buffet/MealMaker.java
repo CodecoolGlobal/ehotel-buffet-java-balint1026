@@ -45,19 +45,24 @@ public class MealMaker {
         return longMeals;
     }
 
-    public List<Meal> makeShortMealsFor(List<Guest> guestsForADay, List<Meal> madeMeals){
+    public List<Meal> makeShortMealsFor(Set<Guest> guestsForADay, List<Meal> madeMeals){
         Random random = new Random();
+        int counter = 4;
         for(Guest guest : guestsForADay){
             if(guest.guestType() == GuestType.BUSINESS) {
                 int numberOfPreferences = guest.guestType().getMealPreferences().size();
                 String mealPreferences = guest.guestType().getMealPreferences().get(random.nextInt(0, numberOfPreferences - 1)).toString();
-                madeMeals.add(new Meal(MealType.valueOf(mealPreferences)));
+                if (counter % 4 == 0) {
+
+                    madeMeals.add(new Meal(MealType.valueOf(mealPreferences)));
+                }
             }
+            counter++;
         }
         return madeMeals;
     }
 
-    public List<Meal> makeMediumMealsForADay(List<Guest> guestsForADay, List<Meal> madeMeals){
+    public List<Meal> makeMediumMealsForADay(Set<Guest> guestsForADay, List<Meal> madeMeals){
         for(Guest guest : guestsForADay){
             if (guest.guestType() == GuestType.TOURIST){
                 madeMeals.add(new Meal(MealType.MASHED_POTATO));

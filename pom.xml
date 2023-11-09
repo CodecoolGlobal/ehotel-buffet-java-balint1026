@@ -35,5 +35,11 @@
             <artifactId>google-api-services-sheets</artifactId>
             <version>v4-rev20220927-2.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
