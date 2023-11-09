@@ -4,6 +4,7 @@ import com.codecool.ehotel.model.Guest;
 import com.codecool.ehotel.model.GuestType;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -18,7 +19,9 @@ public class GuestProvider implements GuestService{
     }
 
     @Override
-    public Set<Guest> getGuestsForDay(List<Guest> guests, LocalDate date) {
-        return null;
+    public Set<Guest> getGuestsForDay(List<List<Guest>> season, int dayIndex) {
+        List<Guest> day = season.get(dayIndex);
+        return new HashSet<>(day);
     }
+
 }
