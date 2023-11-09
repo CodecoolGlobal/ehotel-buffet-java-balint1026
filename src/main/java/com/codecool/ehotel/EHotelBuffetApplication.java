@@ -2,9 +2,11 @@ package com.codecool.ehotel;
 
 import com.codecool.ehotel.model.Guest;
 import com.codecool.ehotel.service.UI.Input;
+import com.codecool.ehotel.service.buffet.MealMaker;
 import com.codecool.ehotel.service.guest.GuestProvider;
-import com.codecool.ehotel.service.sheetsExporter.GoogleSheetsExporter;
+//import com.codecool.ehotel.service.sheetsExporter.GoogleSheetsExporter;
 
+import javax.swing.*;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -37,9 +39,9 @@ public class EHotelBuffetApplication {
             season.add(new ArrayList<>());
         }
         fillSeasonDays(guestList, season, seasonStart, seasonEnd);
-        GoogleSheetsExporter sheetExporter = new GoogleSheetsExporter();
+       // GoogleSheetsExporter sheetExporter = new GoogleSheetsExporter();
         try {
-            sheetExporter.exportDataToGoogleSheets(season);
+            //sheetExporter.exportDataToGoogleSheets(season);
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -49,6 +51,8 @@ public class EHotelBuffetApplication {
 
     private static void fillSeasonDays(List<Guest> guestList, List<List<Guest>> season, LocalDate
             seasonStart, LocalDate seasonEnd) {
+        MealMaker mealMaker= new MealMaker();
+        mealMaker.cookTheFirstPortion(guestList);
         for (Guest guest : guestList) {
             LocalDate checkInDate = guest.checkIn();
             LocalDate checkOutDate = guest.checkOut();
