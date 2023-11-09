@@ -1,28 +1,86 @@
 package com.codecool.ehotel.service.buffet;
 
-import com.codecool.ehotel.model.Guest;
-import com.codecool.ehotel.model.Meal;
-import com.codecool.ehotel.model.MealType;
+import com.codecool.ehotel.model.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class MealMaker {
 
-    public List<Meal> cookTheFirstPortion(List<Guest> guestList){
+    public List<Meal> cookTheFirstPortion(Set<Guest> guestSet){
         List<Meal> meals = new ArrayList<>();
         Random random = new Random();
-        for(Guest guest : guestList){
-            int numberOfPreferences = guest.guestType().getMealPreferences().size();
+        int nonBusinessGuests=0;
+
+        for(Guest guest : guestSet){
+            if(guest.guestType() != GuestType.BUSINESS){
+                nonBusinessGuests++;
+            }
+           /* int numberOfPreferences = guest.guestType().getMealPreferences().size();
             String mealPreferences = guest.guestType().getMealPreferences().get(random.nextInt(0,numberOfPreferences-1)).toString();
             Meal meal = new Meal(MealType.valueOf(mealPreferences));
-            System.out.println(meal.getType().name());
-            meals.add(meal);
+            meals.add(meal); */
         }
-        System.out.println(meals.size());
+        int BusinessGuest = guestSet.size()-nonBusinessGuests;
+        List<MealType> allMeals = List.of(MealType.values());
+        List<MealType> longMeals = new ArrayList<>();
+        List<MealType> mediumMeals = new ArrayList<>();
+        for(MealType meal : allMeals){
+            if(meal.getDurability() == MealDurability.LONG){
+                longMeals.add(meal);
+            } else if (meal.getDurability() == MealDurability.MEDIUM){
+                mediumMeals.add(meal);
+            }
+        }
         return meals;
+    }
+
+    public List<MealType> getLongMeals(){
+        List<MealType> allMeals = List.of(MealType.values());
+        List<MealType> longMeals = new ArrayList<>();
+        for(MealType meal : allMeals){
+            if(meal.getDurability() == MealDurability.LONG){
+                longMeals.add(meal);
+            }
+        }
+        return longMeals;
+    }
+
+    public List<Meal> makeShortMealsFor(List<Guest> guestsForADay, List<Meal> madeMeals){
+        Random random = new Random();
+        for(Guest guest : guestsForADay){
+            if(guest.guestType() == GuestType.BUSINESS) {
+                int numberOfPreferences = guest.guestType().getMealPreferences().size();
+                String mealPreferences = guest.guestType().getMealPreferences().get(random.nextInt(0, numberOfPreferences - 1)).toString();
+                madeMeals.add(new Meal(MealType.valueOf(mealPreferences)));
+            }
+        }
+        return madeMeals;
+    }
+
+    public List<Meal> makeMediumMealsForADay(List<Guest> guestsForADay, List<Meal> madeMeals){
+        for(Guest guest : guestsForADay){
+            if (guest.guestType() == GuestType.TOURIST){
+                madeMeals.add(new Meal(MealType.MASHED_POTATO));
+            }
+        }
+        return madeMeals;
+    }
+
+    public List<Meal> makeLongMealsForTheSeason(List<List<Guest>> guestsForTheSeason){
+        List<Meal> longMeals= new ArrayList<>();
+        int kidNumber = 0;
+        Random random = new Random();
+        for(List<Guest> guestsForADay : guestsForTheSeason){
+            for(Guest guest : guestsForADay){
+                if(guest.guestType() == GuestType.KID){
+                    longMeals.add(new Meal(getLongMeals().get(random.nextInt(0, getLongMeals().size()))));
+                    kidNumber++;
+                }
+            }
+        }
+        System.out.println("Number of kids: " + kidNumber);
+        System.out.println("Number of long-duration-meals created: " + longMeals.size());
+        return longMeals;
     }
 
 }

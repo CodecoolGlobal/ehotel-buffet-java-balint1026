@@ -2,12 +2,9 @@ package com.codecool.ehotel.service.sheetsExporter;
 import com.codecool.ehotel.model.Guest;
 
 
-/*
-
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
-import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.model.*;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -23,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class GoogleSheetsExporter {
@@ -34,66 +33,39 @@ public class GoogleSheetsExporter {
 
     // Constructor
     public GoogleSheetsExporter() {
-        // Initialize any necessary components or settings here
+
     }
     public void exportDataToGoogleSheets(List<List<Guest>> season) {
         try {
             NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             String spreadsheetId = "1wwnD3r4XfDbirIveGFRGgVKbeJa6LAEFeh9bpcZxVTw";
             Sheets service = createSheetsService(HTTP_TRANSPORT);
+            String tabName = LocalDateTime.now().toString().substring(11,19);
             String valueInputOption = "RAW";
+                AddTabToGoogleSheet(service,spreadsheetId, tabName);
             List<List<Object>> allValues = new ArrayList<>();
 
-            List<List<Guest>> rotatedSeason = rotateMatrixToColumn(season);
-
-            for (List<Guest> day : rotatedSeason) {
+            for (int dayIndex = 0; dayIndex < season.size(); dayIndex++) {
+                List<Guest> day = season.get(dayIndex);
                 List<Object> dayValues = new ArrayList<>();
+                dayValues.add("Day " + (dayIndex + 1)); // Add day information
+
                 for (Guest guest : day) {
                     dayValues.add(guest.name());
-                    dayValues.add(guest.checkIn().toString());
-                    dayValues.add(guest.checkOut().toString());
+                    dayValues.add(guest.checkIn().toString().substring(5) + " --- " + guest.checkOut().toString().substring(5));
+                    dayValues.add("");
                 }
+
                 allValues.add(dayValues);
             }
 
-            String range = "B2:ZZZ99999";
             ValueRange body = new ValueRange().setValues(allValues);
+            String range = tabName + "!A1:ZZZ99999";
             UpdateValuesResponse response = updateSheetValues(service, spreadsheetId, range, body, valueInputOption);
             printResult(response);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static List<List<Guest>> rotateMatrixToColumn(List<List<Guest>> matrix) {
-        int rows = matrix.size();
-        int maxCols = 0;
-
-        // Find the maximum number of columns in any row
-        for (List<Guest> row : matrix) {
-            int rowSize = row.size();
-            if (rowSize > maxCols) {
-                maxCols = rowSize;
-            }
-        }
-
-        List<List<Guest>> rotatedMatrix = new ArrayList<>();
-
-        for (int j = 0; j < maxCols; j++) {
-            List<Guest> column = new ArrayList<>();
-            rotatedMatrix.add(column);
-        }
-
-        for (int j = 0; j < maxCols; j++) {
-            for (int i = 0; i < rows; i++) {
-                List<Guest> row = matrix.get(i);
-                if (j < row.size()) {
-                    rotatedMatrix.get(j).add(row.get(j));
-                }
-            }
-        }
-
-        return rotatedMatrix;
     }
 
 
@@ -103,6 +75,15 @@ public class GoogleSheetsExporter {
         return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credentials)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
+    }
+
+    public static BatchUpdateSpreadsheetResponse AddTabToGoogleSheet(Sheets service, String sheetName, String tabName)
+            throws IOException {
+        List<Request> requests = new ArrayList<>();
+        requests.add(new Request().setAddSheet(new AddSheetRequest().setProperties(new SheetProperties()
+                .setTitle(tabName))));
+        BatchUpdateSpreadsheetRequest body = new BatchUpdateSpreadsheetRequest().setRequests(requests);
+        return service.spreadsheets().batchUpdate(sheetName, body).execute();
     }
 
 
@@ -137,4 +118,3 @@ public class GoogleSheetsExporter {
 }
 
 
- */

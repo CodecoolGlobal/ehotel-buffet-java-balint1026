@@ -14,11 +14,7 @@ public class GuestProvider implements GuestService{
     @Override
     public Guest generateRandomGuest(LocalDate seasonStart, LocalDate seasonEnd) {
         List<LocalDate> days = ReservationProvider.selectCheckInDate(seasonStart, seasonEnd);
-        Guest guest = new Guest(RandomNameGenerator.generate(),GuestType.values()[random.nextInt(GuestType.values().length)], days.get(0),days.get(1));
-        // System.out.println(guest.);
-       //System.out.println(guest.toString());
-
-        return guest;
+        return new Guest(RandomNameGenerator.generate(),GuestType.values()[random.nextInt(GuestType.values().length)], days.get(0),days.get(1));
     }
 
     @Override
